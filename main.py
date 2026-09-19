@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from deep_translator import GoogleTranslator
 import uvicorn
@@ -12,11 +13,6 @@ app = FastAPI(
 
 class TranslationRequest(BaseModel):
     text: str
-
-
-class TranslationResponse(BaseModel):
-    original_text: str
-    translated_text: str
 
 
 @app.get("/")
@@ -33,15 +29,17 @@ def health():
     }
 
 
-@app.post("/translate", response_model=TranslationResponse)
+@app.post("/translate")
 def translate_text(request: TranslationRequest):
-
     english_text = request.text.strip()
 
     if not english_text:
-        return TranslationResponse(
-            original_text="",
-            translated_text=""
+        return JSONResponse(
+            content={
+                "original_text": "",
+                "translated_text": ""
+            },
+            media_type="application/json; charset=utf-8"
         )
 
     try:
@@ -50,16 +48,23 @@ def translate_text(request: TranslationRequest):
             target="my"
         ).translate(english_text)
 
-        return TranslationResponse(
-            original_text=english_text,
-            translated_text=translated_text
+        return JSONResponse(
+            content={
+                "original_text": english_text,
+                "translated_text": translated_text
+            },
+            media_type="application/json; charset=utf-8"
         )
 
     except Exception as error:
+        print("Translation error:", error)
 
-        return TranslationResponse(
-            original_text=english_text,
-            translated_text="ဘာသာပြန်ရာတွင် အမှားတစ်ခု ဖြစ်ပွားခဲ့ပါသည်။"
+        return JSONResponse(
+            content={
+                "original_text": english_text,
+                "translated_text": "ဘာသာပြန်ရာတွင် အမှားတစ်ခု ဖြစ်ပွားခဲ့ပါသည်။"
+            },
+            media_type="application/json; charset=utf-8"
         )
 
 

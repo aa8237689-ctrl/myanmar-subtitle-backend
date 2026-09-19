@@ -43,14 +43,11 @@ def translate_text(request: TranslationRequest):
     try:
         print("TRANSLATING:", english_text)
 
-        url = "https://translate.googleapis.com/translate_a/single"
+        url = "https://api.mymemory.translated.net/get"
 
         params = {
-            "client": "gtx",
-            "sl": "en",
-            "tl": "my",
-            "dt": "t",
             "q": english_text,
+            "langpair": "en|my",
         }
 
         response = requests.get(
@@ -63,11 +60,7 @@ def translate_text(request: TranslationRequest):
 
         data = response.json()
 
-        translated_text = ""
-
-        for item in data[0]:
-            if item[0]:
-                translated_text += item[0]
+        translated_text = data["responseData"]["translatedText"]
 
         print("TRANSLATION RESULT:", translated_text)
 

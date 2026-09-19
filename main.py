@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from deep_translator import GoogleTranslator
+import requests
 import uvicorn
 
 app = FastAPI(
@@ -43,12 +43,31 @@ def translate_text(request: TranslationRequest):
     try:
         print("TRANSLATING:", english_text)
 
-        translator = GoogleTranslator(
-            source="en",
-            target="my"
+        url = "https://translate.googleapis.com/translate_a/single"
+
+        params = {
+            "client": "gtx",
+            "sl": "en",
+            "tl": "my",
+            "dt": "t",
+            "q": english_text,
+        }
+
+        response = requests.get(
+            url,
+            params=params,
+            timeout=20
         )
 
-        translated_text = translator.translate(english_text)
+        response.raise_for_status()
+
+        data = response.json()
+
+        translated_text = ""
+
+        for item in data[0]:
+            if item[0]:
+                translated_text += item[0]
 
         print("TRANSLATION RESULT:", translated_text)
 

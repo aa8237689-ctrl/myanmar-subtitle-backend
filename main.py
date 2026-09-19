@@ -6,7 +6,6 @@ import uvicorn
 
 app = FastAPI(
     title="မြန်မာစာတန်းထိုး Server",
-    description="English စာကို မြန်မာစာအဖြစ် ပြောင်းပေးသော Server",
     version="1.0.0"
 )
 
@@ -38,33 +37,37 @@ def translate_text(request: TranslationRequest):
             content={
                 "original_text": "",
                 "translated_text": ""
-            },
-            media_type="application/json; charset=utf-8"
+            }
         )
 
     try:
-        translated_text = GoogleTranslator(
+        print("TRANSLATING:", english_text)
+
+        translator = GoogleTranslator(
             source="en",
             target="my"
-        ).translate(english_text)
+        )
+
+        translated_text = translator.translate(english_text)
+
+        print("TRANSLATION RESULT:", translated_text)
 
         return JSONResponse(
             content={
                 "original_text": english_text,
                 "translated_text": translated_text
-            },
-            media_type="application/json; charset=utf-8"
+            }
         )
 
     except Exception as error:
-        print("Translation error:", error)
+        print("TRANSLATION ERROR:", repr(error))
 
         return JSONResponse(
             content={
                 "original_text": english_text,
-                "translated_text": "ဘာသာပြန်ရာတွင် အမှားတစ်ခု ဖြစ်ပွားခဲ့ပါသည်။"
-            },
-            media_type="application/json; charset=utf-8"
+                "translated_text": "ဘာသာပြန်ရာတွင် အမှားတစ်ခု ဖြစ်ပွားခဲ့ပါသည်။",
+                "error": repr(error)
+            }
         )
 
 

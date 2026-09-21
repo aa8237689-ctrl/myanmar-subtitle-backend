@@ -18,17 +18,13 @@ app = FastAPI(
 
 class TranslationRequest(BaseModel):
     text: str
+MODEL_NAME = "PyaeSoneK/nllb-600m-wikihow-en-my"
 
+print("Loading translation model from Hugging Face:", MODEL_NAME)
 
-MODEL_CACHE = r"D:\AI-Models\models--PyaeSoneK--nllb-600m-wikihow-en-my\snapshots"
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
 
-snapshot = os.listdir(MODEL_CACHE)[0]
-MODEL_PATH = os.path.join(MODEL_CACHE, snapshot)
-
-print("Loading translation model from:", MODEL_PATH)
-
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_PATH)
 
 tokenizer.src_lang = "eng_Latn"
 

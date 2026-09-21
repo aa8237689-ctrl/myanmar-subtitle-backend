@@ -1,3 +1,5 @@
 fastapi
 uvicorn[standard]
 deep-translator
+transformers
+faster-whisper
